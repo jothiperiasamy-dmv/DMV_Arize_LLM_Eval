@@ -3,6 +3,7 @@ import json
 import logging
 
 
+
 import azure.functions as func
 from langdetect import detect
 from sentence_transformers import SentenceTransformer
