@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Web Chat with Page Reload Reset</title>
+
+  <!-- Web Chat JS bundle -->
+  <script
+    crossorigin="anonymous"
+    src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"
+  ></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Roboto", "Open Sans", Arial, sans-serif;
+      background: #f5f5f5;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 1100px;
+      height: 650px;
+      margin: 40px auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .chat-header {
+      background: #2675C6;
+      color: #fff;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .chat-header button {
+      background: #2675C6;
+      border: 2px solid #F8D666;
+      color: #fff;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 20px;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .chat-header button:hover {
+      background: #F8D666;
+      color: #2675C6;
+    }
+
+    #webchat {
+      flex-grow: 1;
+      background: #FFF;
+      overflow: hidden;
+    }
+
+    /* Custom scrollbar in Web Chat */
+    #webchat ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    #webchat ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    #webchat ::-webkit-scrollbar-thumb {
+      background: #5D6C7A;
+      border-radius: 10px;
+    }
+    #webchat ::-webkit-scrollbar-thumb:hover {
+      background: #163159;
+    }
+
+    /* Adjust send icon and avatar initials */
+    .webchat__send-icon {
+      fill: #2675C6 !important;
+    }
+    .webchat__initialsAvatar:not(.webchat__initialsAvatar--user)
+      .webchat__initialsAvatar__initials {
+      color: #fff !important;
+      text-shadow:
+        -1px -1px 0 #163159,
+         1px -1px 0 #163159,
+        -1px  1px 0 #163159,
+         1px  1px 0 #163159 !important;
+      font-weight: bold !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      Ask Guru
+      <button id="resetButton">Reset Chat</button>
+    </div>
+    <div id="webchat" role="main"></div>
+  </div>
+
+  <script>
+    const tokenURL =
+    "https://427b9bc6cbb4e3e8b57a6fdc2f44849.6.environment.api.gov.powerplatform.microsoft.us/powervirtualagents/botsbyschema/cr20e_policyGuru_Dx8waw/directline/token?api-version=2022-03-01-preview"
+      /// prod token
+      ///'https://1cb9e51949c8e37b964b5e5dd0d4332.4.environment.api.gov.powerplatform.microsoft.us/' +
+      ///'powervirtualagents/botsbyschema/cr20e_policyGuru/directline/token?api-version=2022-03-01-preview';
+
+    function generateUserID() {
+      return crypto.randomUUID?.() || 'user_' + Math.random().toString(36).slice(2, 11);
+    }
+
+    async function fetchToken() {
+      const res = await fetch(tokenURL);
+      if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+      return (await res.json()).token;
+    }
+
+    async function startWebChat() {
+      const token = await fetchToken();
+      const userID = generateUserID();
+      const directLine = window.WebChat.createDirectLine({ token, conversationId: undefined });
+      const store = window.WebChat.createStore();
+
+      window.WebChat.renderWebChat(
+        {
+          directLine,
+          store,
+          userID,
+          locale: 'en-US',
+          styleOptions: {
+            hideUploadButton: true,
+            avatarSize: 40,
+            botAvatarInitials: 'G',
+            userAvatarInitials: 'ME',
+            botAvatarBackgroundColor: '#E5E5E5',
+            userAvatarBackgroundColor: '#0077C8',
+            bubbleBorderRadius: 12,
+            bubbleBackground: '#E5E5E5',
+            bubbleFromUserBackground: '#0077C8',
+            bubbleFromUserTextColor: 'White'
+          }
+        },
+        document.getElementById('webchat')
+      );
+    }
+
+    startWebChat().catch(err => console.error(err));
+
+    document.getElementById('resetButton').addEventListener('click', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
