@@ -1,0 +1,15 @@
+For Document prompt:
+--------------------
+1. What form do I use to apply for a replacement vehicle title in California?
+
+2. How do I declare the gross weight of a commercial vehicle in California?
+
+3. Is there a DMV form that exempts me from paying use tax when transferring a car to a family member?
+
+For URL prompt:
+---------------
+1.  What are the restrictions on the use of mobile phones while driving in California under the Vehicle Code?
+
+2.  What are the legal requirements and penalties for driving under the influence (DUI) in California?
+
+3.  What is the process for transferring vehicle ownership in California according to the Vehicle Code?
