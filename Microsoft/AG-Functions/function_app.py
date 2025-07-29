@@ -50,7 +50,7 @@ app = func.FunctionApp()
 # Configure your Arize credentials
 ARIZE_SPACE_KEY = os.getenv("ARIZE_SPACE_KEY")
 ARIZE_API_KEY = os.getenv("ARIZE_API_KEY")
-ARIZE_PROJECT_NAME = "AG_Arize_Project" # Use a meaningful name for your project
+ARIZE_PROJECT_NAME = "AG_Arize_Project"
 
 llm_model = OpenAIModel(
     api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
