@@ -50,7 +50,8 @@ app = func.FunctionApp()
 # Configure your Arize credentials
 ARIZE_SPACE_KEY = os.getenv("ARIZE_SPACE_KEY")
 ARIZE_API_KEY = os.getenv("ARIZE_API_KEY")
-ARIZE_PROJECT_NAME = "AG_Arize_Project"
+ARIZE_PROJECT_NAME = os.getenv("ARIZE_PROJECT_NAME")
+ARIZE_END_POINT = os.getenv("ARIZE_END_POINT")
 
 llm_model = OpenAIModel(
     api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
@@ -83,7 +84,8 @@ def AG_Arize_Function(req: func.HttpRequest) -> func.HttpResponse:
         tracer_provider = register(
             space_id= ARIZE_SPACE_KEY,    
         api_key=ARIZE_API_KEY,
-        project_name= ARIZE_PROJECT_NAME
+        project_name= ARIZE_PROJECT_NAME,
+        # endpoint=ARIZE_END_POINT
         )
 
         tracer = tracer_provider.get_tracer(__name__)
@@ -93,8 +95,15 @@ def AG_Arize_Function(req: func.HttpRequest) -> func.HttpResponse:
             span.set_attribute(SpanAttributes.OPENINFERENCE_SPAN_KIND, OpenInferenceSpanKindValues.LLM.value)
             span.set_attribute(SpanAttributes.INPUT_VALUE,prompt)
             span.set_attribute(SpanAttributes.OUTPUT_VALUE, response)
-            span.set_attribute(SpanAttributes.RETRIEVAL_DOCUMENTS, json.dumps(retrieved_content))
+            span.set_attribute(SpanAttributes.LLM_MODEL_NAME, os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"))
             span.set_status(Status(StatusCode.OK))
+            
+
+            with tracer.start_as_current_span("Retrieved Content") as vector_search_span:
+                for i, document in enumerate(retrieved_content):
+                    vector_search_span.set_attribute(f"retrieval.documents.{i}.document.id", i)
+                    # vector_search_span.set_attribute(f"retrieval.documents.{i}.document.score", document["document.score"])
+                    vector_search_span.set_attribute(f"retrieval.documents.{i}.document.content", document["content"])
 
         trace_id = format(span.get_span_context().trace_id, '032x')
         span_id = format(span.get_span_context().span_id, '016x')
