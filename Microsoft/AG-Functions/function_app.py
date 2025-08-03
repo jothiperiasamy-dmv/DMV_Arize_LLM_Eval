@@ -72,7 +72,7 @@ def AG_Arize_Function(req: func.HttpRequest) -> func.HttpResponse:
         req_body = req.get_json()
         prompt = req_body.get("prompt")
         response = req_body.get("response")
-        retrieved_content = req_body.get("retrieved_content")
+        retrieved_content = json.loads(req_body.get("retrieved_content"))
 
         if not all([prompt, response, retrieved_content]):
             return func.HttpResponse(
@@ -85,7 +85,7 @@ def AG_Arize_Function(req: func.HttpRequest) -> func.HttpResponse:
             space_id= ARIZE_SPACE_KEY,    
         api_key=ARIZE_API_KEY,
         project_name= ARIZE_PROJECT_NAME,
-        # endpoint=ARIZE_END_POINT
+        endpoint=ARIZE_END_POINT
         )
 
         tracer = tracer_provider.get_tracer(__name__)
