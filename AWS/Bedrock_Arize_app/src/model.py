@@ -7,13 +7,14 @@ from arize.otel import register
 import streamlit as st
 import pandas as pd
 from openinference.instrumentation import using_attributes
-
+from opentelemetry.trace import get_current_span, format_span_id
 
 def get_aws_agent_model_response(user_input):
     load_dotenv()
-    
+    os.environ["OTEL_EXPORTER_OTLP_CERTIFICATE"] = r"D:\\Users\\mwjmp26\\OneDrive - California Department of Motor Vehicles\Documents\\arize_app\\app\\cert.pem"
     if "initialized" not in st.session_state:
         tracer_provider = register(
+            endpoint= os.getenv("ARIZE_OTLP_ENDPOINT"),
             space_id=os.getenv("ARIZE_SPACE_ID"),
             api_key=os.getenv("ARIZE_API_KEY"),
             project_name="aws-bedrock-agent-tracing-auto-streamlit app",
